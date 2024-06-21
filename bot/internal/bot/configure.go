@@ -2,6 +2,15 @@ package bot
 
 import "time"
 
+func (b *Bot) SetName(name string) *Bot {
+	b.name = name
+	return b
+}
+
+func (b *Bot) Name() string {
+	return b.name
+}
+
 func (b *Bot) SetPrimaryDomain(domain string) *Bot {
 	b.domain = domain
 	return b

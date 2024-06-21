@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"june/botmgr/internal/api"
 	"os"
 
@@ -37,7 +38,9 @@ func init() {
 
 func main() {
 	log.Info().Msg("starting API...")
-	if err := api.New().Start(); err != nil {
+
+	ctx, cancel := context.WithCancel(context.Background())
+	if err := api.New(ctx, cancel).Start(); err != nil {
 		panic(err)
 	}
 }

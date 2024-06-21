@@ -1,27 +1,36 @@
 package api
 
 import (
-	"june/botmgr/internal/api/routes"
+	"context"
+	"june/botmgr/internal/api/handlers"
+	"june/botmgr/internal/database"
 
 	"github.com/gin-gonic/gin"
 )
 
 type API struct {
 	router *gin.Engine
+	ctx    context.Context
+	cancel context.CancelFunc
 }
 
-func New() *API {
+func New(ctx context.Context, cancel context.CancelFunc) *API {
 	return &API{
 		router: gin.Default(),
+		ctx:    ctx,
+		cancel: cancel,
 	}
 }
 
 func (a *API) Start() error {
-	a.router.Use(ZLogger())
+	db := database.New()
+	if err := db.Init(); err != nil {
+		return err
+	}
 
-	brg := a.router.Group("/bot")
-	routes.RegisterBotRoutes(brg)
+	a.router.Use(ZLogger(db.DB()))
 
+	handlers.NewBotHandler(db).Routes(a.router)
 	a.router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",

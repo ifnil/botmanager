@@ -8,15 +8,19 @@ import (
 
 type Bot struct {
 	collector      *colly.Collector
+	name           string
 	target         string
 	pattern        string
 	domain         string
 	allowedDomains []string
+	id             int
 	interval       time.Duration
 }
 
 func New() *Bot {
 	return &Bot{
+		id:             0,
+		name:           "",
 		collector:      nil,
 		target:         "",
 		pattern:        "",
